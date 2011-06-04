@@ -1,12 +1,12 @@
 #include "ruby.h"
 #include "markdown_lib.h"
 
-static VALUE rb_cMarkdown;
+static VALUE rb_cMultiMarkdown;
 
 static VALUE
-rb_markdown_to_html(int argc, VALUE *argv, VALUE self)
+rb_multimarkdown_to_html(int argc, VALUE *argv, VALUE self)
 {
-    /* grab char pointer to markdown input text */
+    /* grab char pointer to multimarkdown input text */
     VALUE text = rb_funcall(self, rb_intern("text"), 0);
     Check_Type(text, T_STRING);
     char * ptext = StringValuePtr(text);
@@ -32,9 +32,9 @@ rb_markdown_to_html(int argc, VALUE *argv, VALUE self)
 }
 
 static VALUE
-rb_markdown_to_latex(int argc, VALUE *argv, VALUE self)
+rb_multimarkdown_to_latex(int argc, VALUE *argv, VALUE self)
 {
-    /* grab char pointer to markdown input text */
+    /* grab char pointer to multimarkdown input text */
     VALUE text = rb_funcall(self, rb_intern("text"), 0);
     Check_Type(text, T_STRING);
     char * ptext = StringValuePtr(text);
@@ -55,9 +55,9 @@ rb_markdown_to_latex(int argc, VALUE *argv, VALUE self)
 }
 
 // static VALUE
-// rb_markdown_extract_metadata(int argc, VALUE *argv, VALUE self)
+// rb_multimarkdown_extract_metadata(int argc, VALUE *argv, VALUE self)
 // {
-//     /* grab char pointer to markdown input text */
+//     /* grab char pointer to multimarkdown input text */
 //     VALUE text = rb_funcall(self, rb_intern("text"), 0);
 //     Check_Type(text, T_STRING);
 //     char * ptext = StringValuePtr(text);
@@ -70,12 +70,12 @@ rb_markdown_to_latex(int argc, VALUE *argv, VALUE self)
 //     return result;
 // }
 
-void Init_peg_markdown()
+void Init_peg_multimarkdown()
 {
-    rb_cMarkdown = rb_define_class("PEGMarkdown", rb_cObject);
-    rb_define_method(rb_cMarkdown, "to_html", rb_markdown_to_html, -1);
-    rb_define_method(rb_cMarkdown, "to_latex", rb_markdown_to_latex, -1);
-    // rb_define_method(rb_cMarkdown, "extract_metadata", rb_markdown_extract_metadata, 1);
+    rb_cMultiMarkdown = rb_define_class("PEGMultiMarkdown", rb_cObject);
+    rb_define_method(rb_cMultiMarkdown, "to_html", rb_multimarkdown_to_html, -1);
+    rb_define_method(rb_cMultiMarkdown, "to_latex", rb_multimarkdown_to_latex, -1);
+    // rb_define_method(rb_cMultiMarkdown, "extract_metadata", rb_multimarkdown_extract_metadata, 1);
 }
 
 // vim: ts=4 sw=4
