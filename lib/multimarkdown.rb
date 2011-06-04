@@ -1,1 +1,1 @@
-require 'peg_markdown'
+require 'peg_multimarkdown'

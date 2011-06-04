@@ -1,19 +1,18 @@
-require 'peg_markdown.so'
+require 'peg_multimarkdown.so'
 
-# Front-end to jgm's peg-markdown implementation of Markdown, the humane
-# text markup language.
+# Front-end to fletcher penney's peg-multimarkdown implementation of MultiMarkdown
 #
 # A simple processor:
-#   >>> puts Markdown.new("Hello, World.").to_html
+#   >>> puts MultiMarkdown.new("Hello, World.").to_html
 #   <p>Hello, World.</p>
 #
 # With other stuff:
-#   >>> puts Markdown.new("_Hello -- World!_", :smart, :filter_html).to_html
+#   >>> puts MultiMarkdown.new("_Hello -- World!_", :smart, :filter_html).to_html
 #   <p><em>Hello World!</em></p>
 #
-class PEGMarkdown
+class PEGMultiMarkdown
 
-  # Original Markdown formatted text.
+  # Original MultiMarkdown formatted text.
   attr_reader :text
 
   # Set true to have smarty-like quote translation performed.
@@ -34,8 +33,8 @@ class PEGMarkdown
   # Included for compatibility with RedCloth's interface.
   attr_accessor :fold_lines
 
-  # Create a new Markdown processor. The +text+ argument is a string
-  # containing Markdown text. Variable other arguments may be supplied to
+  # Create a new MultiMarkdown processor. The +text+ argument is a string
+  # containing MultiMarkdown text. Variable other arguments may be supplied to
   # set various processing options:
   #
   # * <tt>:smart</tt> - Enable SmartyPants processing.
@@ -59,4 +58,4 @@ class PEGMarkdown
 
 end
 
-Markdown = PEGMarkdown unless defined? Markdown
+MultiMarkdown = PEGMultiMarkdown unless defined? MultiMarkdown
