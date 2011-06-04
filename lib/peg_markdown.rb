@@ -28,6 +28,9 @@ class PEGMarkdown
   # Do not output any raw HTML included in the source text.
   attr_accessor :filter_html
 
+  # Process MultiMarkdown inside of raw HTML
+  attr_accessor :process_html
+
   # Included for compatibility with RedCloth's interface.
   attr_accessor :fold_lines
 
