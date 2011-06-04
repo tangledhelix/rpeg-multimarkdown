@@ -3,6 +3,8 @@
   markdown_lib.c - markdown in C using a PEG grammar.
   (c) 2008 John MacFarlane (jgm at berkeley dot edu).
 
+  portions Copyright (c) 2010-2011 Fletcher T. Penney
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License or the MIT
   license.  See LICENSE for details.
@@ -110,7 +112,7 @@ static void print_tree(element * elt, int indent) {
 /* process_raw_blocks - traverses an element list, replacing any RAW elements with
  * the result of parsing them as markdown text, and recursing into the children
  * of parent elements.  The result should be a tree of elements without any RAWs. */
-static element * process_raw_blocks(element *input, int extensions, element *references, element *notes) {
+static element * process_raw_blocks(element *input, int extensions, element *references, element *notes, element *labels) {
     element *current = NULL;
     element *last_child = NULL;
     char *contents;
@@ -123,18 +125,18 @@ static element * process_raw_blocks(element *input, int extensions, element *ref
              * each chunk separately. */
             contents = strtok(current->contents.str, "\001");
             current->key = LIST;
-            current->children = parse_markdown(contents, extensions, references, notes);
+            current->children = parse_markdown(contents, extensions, references, notes, labels);
             last_child = current->children;
             while ((contents = strtok(NULL, "\001"))) {
                 while (last_child->next != NULL)
                     last_child = last_child->next;
-                last_child->next = parse_markdown(contents, extensions, references, notes);
+                last_child->next = parse_markdown(contents, extensions, references, notes, labels);
             }
             free(current->contents.str);
             current->contents.str = NULL;
         }
         if (current->children != NULL)
-            current->children = process_raw_blocks(current->children, extensions, references, notes);
+            current->children = process_raw_blocks(current->children, extensions, references, notes, labels);
         current = current->next;
     }
     return input;
@@ -146,24 +148,34 @@ GString * markdown_to_g_string(char *text, int extensions, int output_format) {
     element *result;
     element *references;
     element *notes;
+    element *labels;
     GString *formatted_text;
     GString *out;
     out = g_string_new("");
 
     formatted_text = preformat_text(text);
 
-    references = parse_references(formatted_text->str, extensions);
-    notes = parse_notes(formatted_text->str, extensions, references);
-    result = parse_markdown(formatted_text->str, extensions, references, notes);
+    if (output_format == OPML_FORMAT) {
+        result = parse_markdown_for_opml(formatted_text->str, extensions);
+    } else {
+        references = parse_references(formatted_text->str, extensions);
+        notes = parse_notes(formatted_text->str, extensions, references);
+        labels = parse_labels(formatted_text->str, extensions, references, notes);
+        result = parse_markdown_with_metadata(formatted_text->str, extensions, references, notes, labels);
 
-    result = process_raw_blocks(result, extensions, references, notes);
+        result = process_raw_blocks(result, extensions, references, notes, labels);
+    }
 
     g_string_free(formatted_text, TRUE);
 
     print_element_list(out, result, output_format, extensions);
 
     free_element_list(result);
-    free_element_list(references);
+
+    if (output_format != OPML_FORMAT) {
+        free_element_list(references);
+        free_element_list(labels);
+    }
     return out;
 }
 
@@ -179,3 +191,21 @@ char * markdown_to_string(char *text, int extensions, int output_format) {
 }
 
 /* vim:set ts=4 sw=4: */
+
+/* extract_metadata_value - parse document and return value of specified
+   metadata key (e.g. "LateX Mode")/
+   Returns a null-terminated string, which must be freed after use. */
+char * extract_metadata_value(char *text, int extensions, char *key) {
+    char *value;
+    element *result;
+    char *meta;
+    GString *formatted_text;
+
+    formatted_text = preformat_text(text);
+    
+    result = parse_metadata_only(formatted_text->str, extensions);
+    
+    value = metavalue_for_key(key, result->children);
+    free_element_list(result);
+    return value;
+}

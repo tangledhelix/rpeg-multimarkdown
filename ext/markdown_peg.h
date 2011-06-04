@@ -8,7 +8,9 @@ extern char *strdup(const char *string);
 struct Link {
     struct Element   *label;
     char             *url;
-    char             *title;    
+    char             *title;
+    struct Element   *attr;
+    char            *identifier;
 };
 
 typedef struct Link link;
@@ -33,6 +35,7 @@ enum keys { LIST,   /* A generic list of values.  For ordered and bullet lists, 
             STR,
             LINK,
             IMAGE,
+            IMAGEBLOCK,
             CODE,
             HTML,
             EMPH,
@@ -42,14 +45,71 @@ enum keys { LIST,   /* A generic list of values.  For ordered and bullet lists, 
             LISTITEM,
             BULLETLIST,
             ORDEREDLIST,
-            H1, H2, H3, H4, H5, H6,  /* Code assumes that these are in order. */
+            H1, H2, H3, H4, H5, H6, H7, /* Code assumes that these are in order. */
             BLOCKQUOTE,
             VERBATIM,
             HTMLBLOCK,
             HRULE,
             REFERENCE,
-            NOTE
+            NOTE,
+            CITATION,
+            NOCITATION,
+            LOCATOR,
+            NOTELABEL,
+            DEFLIST,
+            TERM,
+            DEFINITION,
+            METAKEY,
+            METAVALUE,
+            METADATA,
+            FOOTER,
+            LABEL,
+            HEADINGSECTION,
+            ENDHTML,
+            TABLE,
+            TABLEHEAD,
+            TABLEBODY,
+            TABLEROW,
+            TABLECELL,
+            CELLSPAN,
+            TABLECAPTION,
+            TABLELABEL,
+            TABLESEPARATOR,
+            AUTOLABEL,
+            ATTRIBUTE,
+            ATTRKEY,
+            ATTRVALUE,
+            GLOSSARY,
+            GLOSSARYTERM,
+            GLOSSARYSORTKEY,
+            MATHSPAN
           };
+
+/* constants for managing Smart Typography */
+enum smartelements {
+    LSQUOTE,
+    RSQUOTE,
+    LDQUOTE,
+    RDQUOTE,
+    NDASH,
+    MDASH,
+    ELLIP,
+    APOS,
+};
+
+enum smartoutput {
+    HTMLOUT,
+    LATEXOUT,
+};
+
+enum language {
+    DUTCH,
+    ENGLISH,
+    FRENCH,
+    GERMAN,
+    SWEDISH,
+    GERMANGUILL,
+};
 
 /* Semantic value of a parsing action. */
 struct Element {
@@ -59,12 +119,24 @@ struct Element {
     struct Element    *next;
 };
 
+
+
 typedef struct Element element;
 
 element * parse_references(char *string, int extensions);
 element * parse_notes(char *string, int extensions, element *reference_list);
-element * parse_markdown(char *string, int extensions, element *reference_list, element *note_list);
+element * parse_labels(char *string, int extensions, element *reference_list, element *note_list);
+
+element * parse_markdown(char *string, int extensions, element *reference_list, element *note_list, element *label_list);
+element * parse_markdown_with_metadata(char *string, int extensions, element *reference_list, element *note_list, element *label_list);
 void free_element_list(element * elt);
 void free_element(element *elt);
 void print_element_list(GString *out, element *elt, int format, int exts);
 
+
+element * parse_metadata_only(char *string, int extensions);
+char * extract_metadata_value(char *text, int extensions, char *key);
+
+char * metavalue_for_key(char *key, element *list);
+
+element * parse_markdown_for_opml(char *string, int extensions);

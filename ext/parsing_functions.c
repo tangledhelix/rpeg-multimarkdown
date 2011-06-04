@@ -31,6 +31,16 @@ static void free_element_contents(element elt) {
       case VERBATIM:
       case CODE:
       case NOTE:
+      case AUTOLABEL:
+      case CITATION:
+      case TERM:
+      case METAKEY:
+      case METAVALUE:
+      case TABLESEPARATOR:
+      case ATTRKEY:
+      case GLOSSARY:
+      case GLOSSARYTERM:
+      case NOTELABEL:
         free(elt.contents.str);
         elt.contents.str = NULL;
         break;
@@ -42,6 +52,9 @@ static void free_element_contents(element elt) {
         free(elt.contents.link->title);
         elt.contents.link->title = NULL;
         free_element_list(elt.contents.link->label);
+        free(elt.contents.link->identifier);
+        elt.contents.link->identifier = NULL;
+/*        free_element_list(elt.contents.link->attr);*/
         free(elt.contents.link);
         elt.contents.link = NULL;
         break;
@@ -86,17 +99,82 @@ element * parse_notes(char *string, int extensions, element *reference_list) {
     return notes;
 }
 
-element * parse_markdown(char *string, int extensions, element *reference_list, element *note_list) {
+element * parse_labels(char *string, int extensions, element *reference_list, element *note_list) {
 
     char *oldcharbuf;
     syntax_extensions = extensions;
     references = reference_list;
     notes = note_list;
+    labels = NULL;
+
+    oldcharbuf = charbuf;
+    charbuf = string;
+    yyparsefrom(yy_AutoLabels);    /* third pass, to collect labels */
+    charbuf = oldcharbuf;
+
+    return labels;
+}
+
+element * parse_markdown(char *string, int extensions, element *reference_list, element *note_list, element *label_list) {
+
+    char *oldcharbuf;
+    syntax_extensions = extensions;
+    references = reference_list;
+    notes = note_list;
+    labels = label_list;
 
     oldcharbuf = charbuf;
     charbuf = string;
 
     yyparsefrom(yy_Doc);
+
+    charbuf = oldcharbuf;          /* restore charbuf to original value */
+    return parse_result;
+
+}
+
+element * parse_markdown_with_metadata(char *string, int extensions, element *reference_list, element *note_list, element *label_list) {
+
+    char *oldcharbuf;
+    syntax_extensions = extensions;
+    references = reference_list;
+    notes = note_list;
+    labels = label_list;
+
+    oldcharbuf = charbuf;
+    charbuf = string;
+
+    yyparsefrom(yy_DocWithMetaData);
+
+    charbuf = oldcharbuf;          /* restore charbuf to original value */
+    return parse_result;
+
+}
+
+element * parse_metadata_only(char *string, int extensions) {
+
+    char *oldcharbuf;
+    syntax_extensions = extensions;
+
+    oldcharbuf = charbuf;
+    charbuf = string;
+
+    yyparsefrom(yy_MetaDataOnly);
+
+    charbuf = oldcharbuf;          /* restore charbuf to original value */
+    return parse_result;
+
+}
+
+element * parse_markdown_for_opml(char *string, int extensions) {
+
+    char *oldcharbuf;
+    syntax_extensions = extensions;
+
+    oldcharbuf = charbuf;
+    charbuf = string;
+
+    yyparsefrom(yy_DocForOPML);
 
     charbuf = oldcharbuf;          /* restore charbuf to original value */
     return parse_result;
