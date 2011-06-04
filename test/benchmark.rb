@@ -2,7 +2,7 @@ require 'rubygems'
 
 iterations = 100
 test_file = "#{File.dirname(__FILE__)}/benchmark.txt"
-implementations = %w[BlueCloth RDiscount Maruku Markdown]
+implementations = %w[BlueCloth RDiscount Maruku MultiMarkdown]
 
 # Attempt to require each implementation and remove any that are not
 # installed.
