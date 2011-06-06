@@ -102,7 +102,7 @@ mmopts << :process_html if options[:process_html]
 
 # ARGV will now only contain input filename, if it contains anything
 STDIN.reopen(ARGV[0], 'rb') if ARGV.any?
-multimarkdown = MultiMarkdown.new(STDIN.read,opts)
+multimarkdown = MultiMarkdown.new(STDIN.read,mmopts)
 STDOUT.reopen(options[:output], 'w') if options[:output]!=""
 case options[:to]
 when "html"
