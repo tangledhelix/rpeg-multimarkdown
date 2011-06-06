@@ -3,7 +3,7 @@ $: << File.join(File.dirname(__FILE__), "../lib")
 require 'test/unit'
 require 'multimarkdown'
 
-MARKDOWN_TEST_DIR = "#{File.dirname(__FILE__)}/MarkdownTest_1.0.3"
+MARKDOWN_TEST_DIR = "#{File.dirname(__FILE__)}/MultiMarkdownTest"
 
 class MultiMarkdownTest < Test::Unit::TestCase
 
@@ -22,6 +22,12 @@ class MultiMarkdownTest < Test::Unit::TestCase
     multimarkdown = MultiMarkdown.new('_Hello World_!')
     assert_respond_to multimarkdown, :to_html
     assert_equal "<p><em>Hello World</em>!</p>", multimarkdown.to_html.strip
+  end
+
+  def test_that_multimarkdown_in_html_goes_to_html
+    multimarkdown = MultiMarkdown.new('Hello <span>_World_</span>!',:process_html)
+    assert_respond_to multimarkdown, :to_html
+    assert_equal "<p>Hello <span><em>World</em></span>!</p>", multimarkdown.to_html.strip
   end
 
   def test_that_bluecloth_restrictions_are_supported
@@ -55,24 +61,27 @@ class MultiMarkdownTest < Test::Unit::TestCase
 
   
 
-  # Build tests for each file in the MultiMarkdownTest test suite
+  # Build tests for each file in the MarkdownTest test suite
+  ["Tests","MultiMarkdownTests","BeamerTests","MemoirTests"].each do |subdir|
+    
+    Dir["#{MARKDOWN_TEST_DIR}/#{subdir}/*.text"].each do |text_file|
 
-  Dir["#{MARKDOWN_TEST_DIR}/Tests/*.text"].each do |text_file|
+      basename = File.basename(text_file).sub(/\.text$/, '')
+      html_file = text_file.sub(/text$/, 'html')
+      method_name = basename.gsub(/[-,]/, '').gsub(/\s+/, '_').downcase
 
-    basename = File.basename(text_file).sub(/\.text$/, '')
-    html_file = text_file.sub(/text$/, 'html')
-    method_name = basename.gsub(/[-,]/, '').gsub(/\s+/, '_').downcase
+      define_method "test_#{method_name}" do
+        multimarkdown = MultiMarkdown.new(File.read(text_file),:compatibility)
+        actual_html = multimarkdown.to_html
+        assert_not_nil actual_html
+      end
 
-    define_method "test_#{method_name}" do
-      multimarkdown = MultiMarkdown.new(File.read(text_file))
-      actual_html = multimarkdown.to_html
-      assert_not_nil actual_html
-    end
+      define_method "test_#{method_name}_with_smarty_enabled" do
+        multimarkdown = MultiMarkdown.new(File.read(text_file), :smart)
+        actual_html = multimarkdown.to_html
+        assert_not_nil actual_html
+      end
 
-    define_method "test_#{method_name}_with_smarty_enabled" do
-      multimarkdown = MultiMarkdown.new(File.read(text_file), :smart)
-      actual_html = multimarkdown.to_html
-      assert_not_nil actual_html
     end
 
   end
