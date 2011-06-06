@@ -2,12 +2,15 @@ Ruby Markdown Extension, implemented using peg-markdown
 Copyright (c) 2008 Ryan Tomayko
 markdown in c, implemented using PEG grammar
 Copyright (c) 2008 John MacFarlane
-
 Additional MultiMarkdown files
 Copyright (c) 2005-2011 Fletcher T. Penney
+Micro-optparse (included in bin/rpeg-multimarkdown)
+Copyright (c) 2011 Florian Pilz
 
 Both peg-markdown and the rpeg-markdown license are released under both the GPL
 and MIT licenses. You may pick the license that best fits your needs.
+
+Micro-optparse is released under the MIT license.
 
 The GPL
 
