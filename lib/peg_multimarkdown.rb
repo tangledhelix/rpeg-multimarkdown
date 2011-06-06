@@ -43,6 +43,7 @@ class PEGMultiMarkdown
   #   source text.
   # * <tt>:filter_html</tt> - Do not output raw HTML included in the
   #   source text.
+  # * <tt>:process_html</tt> - Process MultiMarkdown code inside HTML tags.
   # * <tt>:fold_lines</tt> - RedCloth compatible line folding (not used).
   #
   def initialize(text, *extensions)
