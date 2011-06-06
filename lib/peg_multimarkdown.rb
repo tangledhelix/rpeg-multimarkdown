@@ -51,6 +51,7 @@ class PEGMultiMarkdown
     @notes = false
     @filter_styles = false
     @filter_html = false
+    @process_html = false
     extensions.each { |e| send("#{e}=", true) }
   end
 
