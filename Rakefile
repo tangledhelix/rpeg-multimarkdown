@@ -16,6 +16,7 @@ VERS = '0.1.0'
 #                             'README.markdown','LICENSE','Rakefile',
 #                             '{lib,ext,test}/**.rb','ext/*.{c,h}',
 #                             'test/MarkdownTest*/**/*',
+#                             'test/MultiMarkdownTest/**/*',
 #                             'bin/rpeg-multimarkdown'
 #                           ]
 #     s.bindir            = 'bin'
@@ -100,24 +101,17 @@ task 'test:unit' => [:build] do |t|
   ruby 'test/multimarkdown_test.rb'
 end
 
-desc "Run conformance tests (MARKDOWN_TEST_VER=#{ENV['MARKDOWN_TEST_VER'] ||= '1.0.3'})"
+desc "Run conformance tests"
 task 'test:conformance' => [:build] do |t|
   script = "#{pwd}/bin/rpeg-multimarkdown"
-  test_version = ENV['MARKDOWN_TEST_VER']
-  chdir("test/MarkdownTest_#{test_version}") do
-    sh "./MarkdownTest.pl --script='#{script}' --tidy"
+  chdir("test/MultiMarkdownTest") do
+    sh "./MarkdownTest.pl --script='#{script}' --flags='-c' --tidy"
+    sh "./MarkdownTest.pl --script='#{script}' --testdir='MultiMarkdownTests'"
   end
 end
 
-desc 'Run version 1.0 conformance suite'
-task 'test:conformance:1.0' => [:build] do
-  ENV['MARKDOWN_TEST_VER'] = '1.0'
-  Rake::Task['test:conformance'].invoke
-end
-
-desc 'Run 1.0.3 conformance suite'
-task 'test:conformance:1.0.3' => [:build] do |t|
-  ENV['MARKDOWN_TEST_VER'] = '1.0.3'
+desc 'Run conformance suite'
+task 'test:conformance' => [:build] do |t|
   Rake::Task['test:conformance'].invoke
 end
 
@@ -134,9 +128,9 @@ desc "See how much memory we're losing"
 task 'test:mem' => %w[submodule:exist build] do |t|
   $: << File.join(File.dirname(__FILE__), "lib")
   require 'multimarkdown'
-  FileList['test/mem.txt', 'peg-multimarkdown/MarkdownTest_1.0.3/Tests/*.text'].each do |file|
+  FileList['test/mem.txt', 'peg-multimarkdown/MarkdownTest/Tests/*.text'].each do |file|
     printf "%s: \n", file
-    multimarkdown = MultiMarkdown.new(File.read(file))
+    multimarkdown = MultiMarkdown.new(File.read(file),:compatibility)
     iterations = (ENV['N'] || 100).to_i
     total, growth = [], []
     iterations.times do |i|
