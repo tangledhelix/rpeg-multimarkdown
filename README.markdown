@@ -1,56 +1,50 @@
-Ruby PEG Markdown
-=================
+Ruby PEG MultiMarkdown
+======================
 
-An extension library around [John MacFarlane's fast implementation][1]
-of Markdown in C.
+An extension library around [Fletcher Penney's implementation][1]
+of MultiMarkdown in C. This library is based (almost entirely) on 
+[rpeg-markdown][2], which is a ruby extension library around
+[John MacFarlane's C implementation of Markdown][3].
 
-[1]: http://github.com/jgm/peg-markdown/
+[1]: http://github.com/fletcher/peg-multimarkdown/
+[2]: http://github.com/rtomayko/rpeg-markdown
+[3]: http://github.com/jgm/peg-markdown/
 
 Synopsis
 --------
 
-    >> require 'markdown'
-    >> puts Markdown.new('Hello, world.').to_html
+    >> require 'multimarkdown'
+    >> puts MultiMarkdown.new('Hello, world.').to_html
     <p>Hello, world.</p>
 
-    >> puts Markdown.new('_Hello World!_', :smart, :filter_html).to_html
+    >> puts MultiMarkdown.new('_Hello World!_', :smart, :filter_html).to_html
     <p><em>Hello World!</em></p>
 
-    >> puts Markdown.new('_Hello World!_').to_latex
+    >> puts MultiMarkdown.new('_Hello World!_').to_latex
     \emph{Hello World!}
 
-    >> puts Markdown.new('_Hello World!_').to_groff_mm
+    >> puts MultiMarkdown.new('_Hello World!_').to_groff_mm
     .P
     \fIHello world!\fR
 
-    >> PEGMarkdown.new('Hello! World!')
+    >> PEGMultiMarkdown.new('Hello! World!')
 
-Installation / Hacking
-----------------------
+Hacking
+-------
 
 This library requires a recent version of glib2. All modern GNU userland
 systems should be fine.
 
-Install from GEM:
-
-    $ sudo gem install rpeg-markdown
-
 Hacking:
 
-    $ git clone git://github.com/rtomayko/rpeg-markdown.git
-    $ cd rpeg-markdown
+    $ git clone git://github.com/djungelvral/rpeg-multimarkdown.git
+    $ cd rpeg-multimarkdown
     $ rake test
-
-Patches happily accepted via fork or email.
-
-Changes
--------
-
-  * [Version 1.0](http://github.com/rtomayko/rpeg-markdown/tree/v1.0)
 
 COPYING
 -------
 
-The peg-markdown sources are licensed under the GPL and the Ruby PEG Markdown
-extension sources adopts this license. See the file LICENSE included with this
-distribution for more information.
+The peg-markdown, peg-multimarkdown, and Ruby PEG Markdown extension sources
+are licensed under the GPL and the Ruby PEG MultiMarkdown extension sources
+adopts this license. See the file LICENSE included with this distribution for
+more information.
