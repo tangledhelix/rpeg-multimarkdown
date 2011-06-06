@@ -23,10 +23,6 @@ Synopsis
     >> puts MultiMarkdown.new('_Hello World!_').to_latex
     \emph{Hello World!}
 
-    >> puts MultiMarkdown.new('_Hello World!_').to_groff_mm
-    .P
-    \fIHello world!\fR
-
     >> PEGMultiMarkdown.new('Hello! World!')
 
 Hacking
