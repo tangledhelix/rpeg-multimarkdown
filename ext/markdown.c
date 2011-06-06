@@ -19,6 +19,8 @@ rb_multimarkdown_to_html(int argc, VALUE *argv, VALUE self)
         extensions = extensions | EXT_NOTES ;
     if ( rb_funcall(self, rb_intern("process_html"), 0) == Qtrue )
         extensions = extensions | EXT_PROCESS_HTML;
+    if ( rb_funcall(self, rb_intern("compatibility"), 0) == Qtrue )
+        extensions = extensions | EXT_COMPATIBILITY;
     if ( rb_funcall(self, rb_intern("filter_html"), 0) == Qtrue )
         extensions = extensions | EXT_FILTER_HTML ;
     if ( rb_funcall(self, rb_intern("filter_styles"), 0) == Qtrue )

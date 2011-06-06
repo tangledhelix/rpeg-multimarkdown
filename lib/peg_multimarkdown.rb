@@ -30,6 +30,9 @@ class PEGMultiMarkdown
   # Process MultiMarkdown inside of raw HTML
   attr_accessor :process_html
 
+  # Markdown compatibility mode
+  attr_accessor :compatibility
+
   # Included for compatibility with RedCloth's interface.
   attr_accessor :fold_lines
 
@@ -44,6 +47,8 @@ class PEGMultiMarkdown
   # * <tt>:filter_html</tt> - Do not output raw HTML included in the
   #   source text.
   # * <tt>:process_html</tt> - Process MultiMarkdown code inside HTML tags.
+  # * <tt>:compatibility</tt> - Process MultiMarkdown code in Markdown 
+  #   compatibility mode.
   # * <tt>:fold_lines</tt> - RedCloth compatible line folding (not used).
   #
   def initialize(text, *extensions)
@@ -53,6 +58,7 @@ class PEGMultiMarkdown
     @filter_styles = false
     @filter_html = false
     @process_html = false
+    @compatibility = false
     extensions.each { |e| send("#{e}=", true) }
   end
 
