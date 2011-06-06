@@ -102,12 +102,7 @@ mmopts << :filter_styles if options[:filter_styles]
 mmopts << :process_html  if options[:process_html]
 mmopts << :smart         if options[:smart]
 mmopts << :notes         if options[:notes]
-if options[:compatibility]
-  mmopts = []
-  mmopts << :compatibility
-end
-
-puts mmopts.join(", ")
+mmopts << :compatibility if options[:compatibility]
 
 # ARGV will now only contain input filename, if it contains anything
 STDIN.reopen(ARGV[0], 'rb') if ARGV.any?

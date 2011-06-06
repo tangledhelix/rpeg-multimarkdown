@@ -53,13 +53,18 @@ class PEGMultiMarkdown
   #
   def initialize(text, *extensions)
     @text = text
-    @smart = false
-    @notes = false
+    @smart = true
+    @notes = true
     @filter_styles = false
     @filter_html = false
     @process_html = false
     @compatibility = false
     extensions.each { |e| send("#{e}=", true) }
+    if @compatibility
+      @smart = false
+      @notes = false
+      @process_html = false
+    end
   end
 
   alias to_s text
