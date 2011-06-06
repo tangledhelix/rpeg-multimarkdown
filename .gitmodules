@@ -1,6 +1,6 @@
-[submodule "peg-markdown"]
-	path = peg-markdown
-	url = git://github.com/jgm/peg-markdown.git
 [submodule "peg-multimarkdown"]
 	path = peg-multimarkdown
 	url = git://github.com/fletcher/peg-multimarkdown.git
+[submodule "test/MultiMarkdownTest"]
+	path = test/MultiMarkdownTest
+	url = git://github.com/fletcher/MMD-Test-Suite.git
