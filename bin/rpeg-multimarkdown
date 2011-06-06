@@ -89,24 +89,29 @@ options = Parser.new do |p|
   p.option :filter_html, "filter out raw HTML (except styles)", :default => false
   p.option :process_html, "process MultiMarkdown inside of raw HTML", :default => false
   p.option :filter_styles, "filter out HTML styles", :default => false
+  p.option :smart, "use smart typography extension", :default => true
+  p.option :notes, "use notes extension", :default => true
   p.option :output, "send output to FILE (default is stdout)", :default => ""
   p.option :to, "convert to FORMAT (default is html)", :default => "html", :value_in_set => ["html","latex","memoir","beamer","odf","opml"]
 end.process!
 
 # Convert options to MultiMarkdown module's options
 mmopts = []
-mmopts << :compatibility if options[:compatibility]
 mmopts << :filter_html   if options[:filter_html]
 mmopts << :filter_styles if options[:filter_styles]
 mmopts << :process_html  if options[:process_html]
+mmopts << :smart         if options[:smart]
+mmopts << :notes         if options[:notes]
+if options[:compatibility]
+  mmopts = []
+  mmopts << :compatibility
+end
+
+puts mmopts.join(", ")
 
 # ARGV will now only contain input filename, if it contains anything
 STDIN.reopen(ARGV[0], 'rb') if ARGV.any?
-if mmopts.any?
-  multimarkdown = MultiMarkdown.new(STDIN.read,mmopts)
-else
-  multimarkdown = MultiMarkdown.new(STDIN.read)
-end
+multimarkdown = MultiMarkdown.new(STDIN.read,*mmopts)
 STDOUT.reopen(options[:output], 'w') if options[:output]!=""
 case options[:to]
 when "html"
