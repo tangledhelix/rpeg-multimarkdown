@@ -28,17 +28,26 @@ Synopsis
 
     >> PEGMultiMarkdown.new('Hello! World!')
 
-Hacking
--------
+Installation / Hacking
+----------------------
 
 This library requires a recent version of glib2. All modern GNU userland
 systems should be fine.
+
+Install from GEM:
+
+    $ sudo gem install rpeg-multimarkdown
 
 Hacking:
 
     $ git clone git://github.com/djungelvral/rpeg-multimarkdown.git
     $ cd rpeg-multimarkdown
     $ rake test
+
+Changes
+-------
+
+  * [Version 0.1.0](http://github.com/djungelvral/rpeg-multimarkdown/tree/v0.1.0)
 
 COPYING
 -------

@@ -1,44 +1,51 @@
 require 'rake/clean'
-require 'rake/packagetask'
-require 'rake/gempackagetask'
+# require 'rake/packagetask'
+# require 'rake/gempackagetask'
+
+require 'rubygems'
+require 'rubygems/package_task'
 
 task :default => :test
 
 DLEXT = Config::CONFIG['DLEXT']
 VERS = '0.1.0'
 
-# spec =
-#   Gem::Specification.new do |s|
-#     s.name              = "rpeg-multimarkdown"
-#     s.version           = VERS
-#     s.summary           = "Fast MultiMarkdown implementation"
-#     s.files             = FileList[
-#                             'README.markdown','LICENSE','Rakefile',
-#                             '{lib,ext,test}/**.rb','ext/*.{c,h}',
-#                             'test/MarkdownTest*/**/*',
-#                             'test/MultiMarkdownTest/**/*',
-#                             'bin/rpeg-multimarkdown'
-#                           ]
-#     s.bindir            = 'bin'
-#     s.executables       << 'rpeg-multimarkdown'
-#     s.require_path      = 'lib'
-#     s.has_rdoc          = true
-#     s.extra_rdoc_files  = ['LICENSE']
-#     s.test_files        = FileList['test/multimarkdown_test.rb']
-#     s.extensions        = ['ext/extconf.rb']
-# 
-#     s.author            = 'Oliver Whyte'
-#     s.email             = 'oawhyte@gmail.com'
-#     s.homepage          = 'http://github.com/djungelvral/rpeg-multimarkdown'
-#     s.rubyforge_project = 'wink'
-#   end
-# 
-#   Rake::GemPackageTask.new(spec) do |p|
-#     p.gem_spec = spec
-#     p.need_tar_gz = true
-#     p.need_tar = false
-#     p.need_zip = false
-#   end
+spec = Gem::Specification.new do |s|
+  s.name              = "rpeg-multimarkdown"
+  s.version           = VERS
+  s.summary           = "Fast MultiMarkdown implementation"
+  s.description       =<<-EOF
+                        A Ruby extension to process MultiMarkdown-formatted
+                        text, using Fletcher Penney's C peg-multimarkdown
+                        implementation.
+                        EOF
+  s.files             = FileList[
+                          'README.markdown','LICENSE','Rakefile',
+                          '{lib,ext,test}/**.rb','ext/*.{c,h}',
+                          'test/MultiMarkdownTest/**/*',
+                          'bin/rpeg-multimarkdown'
+                        ]
+  s.bindir            = 'bin'
+  s.executables       << 'rpeg-multimarkdown'
+  s.require_path      = 'lib'
+  s.extra_rdoc_files  = ['LICENSE']
+  s.test_files        = FileList['test/multimarkdown_test.rb']
+  s.extensions        = ['ext/extconf.rb']
+
+  s.authors           = ['Oliver Whyte','Ryan Tomayko']
+  s.email             = ['oawhyte@gmail.com','r@tomayko.com']
+  s.homepage          = 'http://github.com/djungelvral/rpeg-multimarkdown'
+  s.rubyforge_project = 'rpeg-multimarkdown'
+end
+  
+# For Mac OS X -- prevents prevent additional ._* files being added to tarball
+ENV['COPYFILE_DISABLE'] = 'true'
+
+Gem::PackageTask.new(spec) do |pkg|
+  pkg.need_tar_gz = true
+  pkg.need_tar = false
+  pkg.need_zip = false
+end
 
 namespace :submodule do
   desc 'Init the peg-multimarkdown submodule'
@@ -156,12 +163,9 @@ end
 # Rubyforge
 # ==========================================================
 
-# PKGNAME = "pkg/rpeg-multimarkdown-#{VERS}"
-# 
-# desc 'Publish new release to rubyforge'
-# task :release => [ "#{PKGNAME}.gem", "#{PKGNAME}.tar.gz" ] do |t|
-#   sh <<-end
-#     rubyforge add_release wink rpeg-multimarkdown #{VERS} #{PKGNAME}.gem &&
-#     rubyforge add_file    wink rpeg-multimarkdown #{VERS} #{PKGNAME}.tar.gz
-#   end
-# end
+PKGNAME = "pkg/rpeg-multimarkdown-#{VERS}"
+
+desc 'Publish new release to rubyforge'
+task :release => [ "#{PKGNAME}.gem", "#{PKGNAME}.tar.gz" ] do |t|
+  sh "gem push #{PKGNAME}.gem"
+end
