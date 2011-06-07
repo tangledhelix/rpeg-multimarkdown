@@ -8,7 +8,7 @@ require 'rubygems/package_task'
 task :default => :test
 
 DLEXT = Config::CONFIG['DLEXT']
-VERS = '0.1.0'
+VERS = '0.1.1'
 
 spec = Gem::Specification.new do |s|
   s.name              = "rpeg-multimarkdown"
