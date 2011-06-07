@@ -40,14 +40,21 @@ rb_multimarkdown_to_latex(int argc, VALUE *argv, VALUE self)
     VALUE text = rb_funcall(self, rb_intern("text"), 0);
     Check_Type(text, T_STRING);
     char * ptext = StringValuePtr(text);
-
-    /* flip extension bits - note that defaults are different than
-     * for HTML */
-    int extensions = EXT_SMART | EXT_NOTES | EXT_FILTER_HTML | EXT_FILTER_STYLES;
-    if ( rb_funcall(self, rb_intern("smart"), 0) == Qfalse )
-        extensions = extensions & ~ EXT_SMART ;
-    if ( rb_funcall(self, rb_intern("notes"), 0) == Qfalse )
-        extensions = extensions & ~ EXT_NOTES ;
+    
+    /* flip extension bits */
+    int extensions = 0;
+    if ( rb_funcall(self, rb_intern("smart"), 0) == Qtrue )
+        extensions = extensions | EXT_SMART ;
+    if ( rb_funcall(self, rb_intern("notes"), 0) == Qtrue )
+        extensions = extensions | EXT_NOTES ;
+    if ( rb_funcall(self, rb_intern("process_html"), 0) == Qtrue )
+        extensions = extensions | EXT_PROCESS_HTML;
+    if ( rb_funcall(self, rb_intern("compatibility"), 0) == Qtrue )
+        extensions = extensions | EXT_COMPATIBILITY;
+    if ( rb_funcall(self, rb_intern("filter_html"), 0) == Qtrue )
+        extensions = extensions | EXT_FILTER_HTML ;
+    if ( rb_funcall(self, rb_intern("filter_styles"), 0) == Qtrue )
+        extensions = extensions | EXT_FILTER_STYLES ;
 
     char *latex = markdown_to_string(ptext, extensions, LATEX_FORMAT);
     VALUE result = rb_str_new2(latex);
