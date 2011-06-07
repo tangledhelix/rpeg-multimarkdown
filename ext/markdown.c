@@ -1,5 +1,5 @@
 #include "ruby.h"
-#include "markdown_lib.h"
+#include "markdown_peg.h"
 
 static VALUE rb_cMultiMarkdown;
 
@@ -10,12 +10,13 @@ int get_exts(VALUE self)
         extensions = extensions | EXT_SMART ;
     if ( rb_funcall(self, rb_intern("notes"), 0) == Qtrue )
         extensions = extensions | EXT_NOTES ;
-    if ( rb_funcall(self, rb_intern("process_html"), 0) == Qtrue )
-        extensions = extensions | EXT_PROCESS_HTML;
     if ( rb_funcall(self, rb_intern("filter_html"), 0) == Qtrue )
         extensions = extensions | EXT_FILTER_HTML ;
     if ( rb_funcall(self, rb_intern("filter_styles"), 0) == Qtrue )
         extensions = extensions | EXT_FILTER_STYLES ;
+    if ( rb_funcall(self, rb_intern("process_html"), 0) == Qtrue )
+        extensions = extensions | EXT_PROCESS_HTML;
+    /* Compatibility overwrites all other extensions */
     if ( rb_funcall(self, rb_intern("compatibility"), 0) == Qtrue )
         extensions = EXT_COMPATIBILITY;
     return extensions;
@@ -29,7 +30,6 @@ rb_multimarkdown_to_html(int argc, VALUE *argv, VALUE self)
     Check_Type(text, T_STRING);
     char * ptext = StringValuePtr(text);
 
-    /* flip extension bits */
     int extensions = get_exts(self);
 
     char *html = markdown_to_string(ptext, extensions, HTML_FORMAT);
@@ -47,7 +47,6 @@ rb_multimarkdown_to_latex(int argc, VALUE *argv, VALUE self)
     Check_Type(text, T_STRING);
     char * ptext = StringValuePtr(text);
     
-    /* flip extension bits */
     int extensions = get_exts(self);
 
     char *latex = markdown_to_string(ptext, extensions, LATEX_FORMAT);
@@ -57,28 +56,33 @@ rb_multimarkdown_to_latex(int argc, VALUE *argv, VALUE self)
     return result;
 }
 
-// static VALUE
-// rb_multimarkdown_extract_metadata(int argc, VALUE *argv, VALUE self)
-// {
-//     /* grab char pointer to multimarkdown input text */
-//     VALUE text = rb_funcall(self, rb_intern("text"), 0);
-//     Check_Type(text, T_STRING);
-//     char * ptext = StringValuePtr(text);
-// 
-//     /* Display metadata on request */
-//     char *metadata = extract_metadata_value(inputbuf->str, extensions, opt_extract_meta);
-//     VALUE result = rb_str_new2(latex);
-//     free(metadata);
-// 
-//     return result;
-// }
+static VALUE
+rb_multimarkdown_extract_metadata(VALUE self, VALUE key)
+{
+    /* grab char pointer to multimarkdown input text */
+    VALUE text = rb_funcall(self, rb_intern("text"), 0);
+    Check_Type(text, T_STRING);
+    char * ptext = StringValuePtr(text);
+
+    Check_Type(key, T_STRING);
+    char * pkey = StringValuePtr(key);
+    
+    int extensions = get_exts(self);
+
+    /* Display metadata on request */
+    char *metadata = extract_metadata_value(ptext, extensions, pkey);
+    VALUE result = rb_str_new2(metadata);
+    free(metadata);
+
+    return result;
+}
 
 void Init_peg_multimarkdown()
 {
     rb_cMultiMarkdown = rb_define_class("PEGMultiMarkdown", rb_cObject);
     rb_define_method(rb_cMultiMarkdown, "to_html", rb_multimarkdown_to_html, -1);
     rb_define_method(rb_cMultiMarkdown, "to_latex", rb_multimarkdown_to_latex, -1);
-    // rb_define_method(rb_cMultiMarkdown, "extract_metadata", rb_multimarkdown_extract_metadata, 1);
+    rb_define_method(rb_cMultiMarkdown, "extract_metadata", rb_multimarkdown_extract_metadata, 1);
 }
 
 // vim: ts=4 sw=4

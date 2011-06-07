@@ -93,6 +93,7 @@ options = Parser.new do |p|
   p.option :notes, "use notes extension", :default => true
   p.option :output, "send output to FILE (default is stdout)", :default => ""
   p.option :to, "convert to FORMAT (default is html)", :default => "html", :value_in_set => ["html","latex","memoir","beamer","odf","opml"]
+  p.option :extract, "extract and display specified metadata", :default => ""
 end.process!
 
 # Convert options to MultiMarkdown module's options
@@ -108,6 +109,14 @@ mmopts << :compatibility if options[:compatibility]
 STDIN.reopen(ARGV[0], 'rb') if ARGV.any?
 multimarkdown = MultiMarkdown.new(STDIN.read,*mmopts)
 STDOUT.reopen(options[:output], 'w') if options[:output]!=""
+
+# Print specified metadata if requested
+if options[:extract]!=""
+  puts multimarkdown.extract_metadata(options[:extract])
+  exit(0)
+end
+
+# Do processing
 case options[:to]
 when "html"
   STDOUT.write(multimarkdown.to_html)
