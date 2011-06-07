@@ -23,6 +23,9 @@ Synopsis
     >> puts MultiMarkdown.new('_Hello World!_').to_latex
     \emph{Hello World!}
 
+    >> puts MultiMarkdown.new("Title: Some document\n\nSome text in the document").extract_metadata("title")
+    Some document
+
     >> PEGMultiMarkdown.new('Hello! World!')
 
 Hacking
