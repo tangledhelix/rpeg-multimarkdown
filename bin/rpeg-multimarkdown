@@ -111,7 +111,9 @@ STDOUT.reopen(options[:output], 'w') if options[:output]!=""
 case options[:to]
 when "html"
   STDOUT.write(multimarkdown.to_html)
+when "latex"
+  STDOUT.write(multimarkdown.to_latex)
 else
-  puts "Output other than html not currently supported"
+  puts "Output other than html & latex not currently supported"
   exit(1)
 end
