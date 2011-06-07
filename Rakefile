@@ -107,6 +107,9 @@ task 'test:conformance' => [:build] do |t|
   chdir("test/MultiMarkdownTest") do
     sh "./MarkdownTest.pl --script='#{script}' --flags='-c' --tidy"
     sh "./MarkdownTest.pl --script='#{script}' --testdir='MultiMarkdownTests'"
+  	sh "./MarkdownTest.pl --script='#{script}' --testdir='MultiMarkdownTests' --flags='-t latex' --ext='.tex'"
+  	sh "./MarkdownTest.pl --script='#{script}' --testdir='BeamerTests' --flags='-t latex' --ext='.tex'"
+  	sh "./MarkdownTest.pl --script='#{script}' --testdir='MemoirTests' --flags='-t latex' --ext='.tex'"
   end
 end
 
