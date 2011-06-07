@@ -3,15 +3,8 @@
 
 static VALUE rb_cMultiMarkdown;
 
-static VALUE
-rb_multimarkdown_to_html(int argc, VALUE *argv, VALUE self)
+int get_exts(VALUE self)
 {
-    /* grab char pointer to multimarkdown input text */
-    VALUE text = rb_funcall(self, rb_intern("text"), 0);
-    Check_Type(text, T_STRING);
-    char * ptext = StringValuePtr(text);
-
-    /* flip extension bits */
     int extensions = 0;
     if ( rb_funcall(self, rb_intern("smart"), 0) == Qtrue )
         extensions = extensions | EXT_SMART ;
@@ -25,6 +18,19 @@ rb_multimarkdown_to_html(int argc, VALUE *argv, VALUE self)
         extensions = extensions | EXT_FILTER_HTML ;
     if ( rb_funcall(self, rb_intern("filter_styles"), 0) == Qtrue )
         extensions = extensions | EXT_FILTER_STYLES ;
+    return extensions;
+}
+
+static VALUE
+rb_multimarkdown_to_html(int argc, VALUE *argv, VALUE self)
+{
+    /* grab char pointer to multimarkdown input text */
+    VALUE text = rb_funcall(self, rb_intern("text"), 0);
+    Check_Type(text, T_STRING);
+    char * ptext = StringValuePtr(text);
+
+    /* flip extension bits */
+    int extensions = get_exts(self);
 
     char *html = markdown_to_string(ptext, extensions, HTML_FORMAT);
     VALUE result = rb_str_new2(html);
@@ -42,19 +48,7 @@ rb_multimarkdown_to_latex(int argc, VALUE *argv, VALUE self)
     char * ptext = StringValuePtr(text);
     
     /* flip extension bits */
-    int extensions = 0;
-    if ( rb_funcall(self, rb_intern("smart"), 0) == Qtrue )
-        extensions = extensions | EXT_SMART ;
-    if ( rb_funcall(self, rb_intern("notes"), 0) == Qtrue )
-        extensions = extensions | EXT_NOTES ;
-    if ( rb_funcall(self, rb_intern("process_html"), 0) == Qtrue )
-        extensions = extensions | EXT_PROCESS_HTML;
-    if ( rb_funcall(self, rb_intern("compatibility"), 0) == Qtrue )
-        extensions = extensions | EXT_COMPATIBILITY;
-    if ( rb_funcall(self, rb_intern("filter_html"), 0) == Qtrue )
-        extensions = extensions | EXT_FILTER_HTML ;
-    if ( rb_funcall(self, rb_intern("filter_styles"), 0) == Qtrue )
-        extensions = extensions | EXT_FILTER_STYLES ;
+    int extensions = get_exts(self);
 
     char *latex = markdown_to_string(ptext, extensions, LATEX_FORMAT);
     VALUE result = rb_str_new2(latex);
