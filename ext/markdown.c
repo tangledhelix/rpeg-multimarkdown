@@ -80,8 +80,22 @@ rb_multimarkdown_extract_metadata(VALUE self, VALUE key)
 void Init_peg_multimarkdown()
 {
     rb_cMultiMarkdown = rb_define_class("PEGMultiMarkdown", rb_cObject);
+    /* 
+     * Document-method: PEGMultiMarkdown#to_html
+     * Return string containing HTML generated from `text` 
+     */
     rb_define_method(rb_cMultiMarkdown, "to_html", rb_multimarkdown_to_html, -1);
+    /* 
+     * Document-method: PEGMultiMarkdown#to_latex
+     * Return string containing latex generated from `text` 
+     */
     rb_define_method(rb_cMultiMarkdown, "to_latex", rb_multimarkdown_to_latex, -1);
+    /* 
+     * Document-method: PEGMultiMarkdown#extract_metadata
+     * call-seq:
+     *     extract_metadata(key)
+     * Extract metadata specified by `key` from `text`
+     */
     rb_define_method(rb_cMultiMarkdown, "extract_metadata", rb_multimarkdown_extract_metadata, 1);
 }
 
