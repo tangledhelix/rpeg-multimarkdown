@@ -14,17 +14,18 @@ Synopsis
 --------
 
     >> require 'multimarkdown'
+    
     >> puts MultiMarkdown.new('Hello, world.').to_html
-    <p>Hello, world.</p>
+    # <p>Hello, world.</p>
 
     >> puts MultiMarkdown.new('_Hello World!_', :smart, :filter_html).to_html
-    <p><em>Hello World!</em></p>
+    # <p><em>Hello World!</em></p>
 
     >> puts MultiMarkdown.new('_Hello World!_').to_latex
-    \emph{Hello World!}
+    # \emph{Hello World!}
 
     >> puts MultiMarkdown.new("Title: Some document\n\nSome text in the document").extract_metadata("title")
-    Some document
+    # Some document
 
     >> PEGMultiMarkdown.new('Hello! World!')
 
