@@ -1,6 +1,6 @@
 [submodule "peg-multimarkdown"]
 	path = peg-multimarkdown
-	url = git://github.com/fletcher/peg-multimarkdown.git
+	url = https://github.com/tangledhelix/peg-multimarkdown.git
 [submodule "test/MultiMarkdownTest"]
 	path = test/MultiMarkdownTest
 	url = git://github.com/fletcher/MMD-Test-Suite.git
